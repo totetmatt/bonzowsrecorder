@@ -33,8 +33,8 @@ def getRepo(room, user):
         return Repository(Repo(repo_dir), repo_dir)
 
 
-async def run(room="roomtest", user="totetmatt"):
-    uri = f"ws://drone.alkama.com:9000/{room}/{user}"
+async def run(uri, room, user):
+    uri = f"{uri}/{room}/{user}"
     repo = getRepo(room, user)
     async with websockets.connect(uri) as websocket:
         while True:
@@ -55,9 +55,11 @@ if __name__ == "__main__":
         description='Grab and git commit all change from a bonzomatic sender')
     parser.add_argument('--room_name', metavar='room_name', type=str, default="roomtest",
                         help='Room name')
+    parser.add_argument('--ws_uri', metavar='ws_uri', type=str, default="ws://drone.alkama.com:9000",
+                        help='Room name')
     parser.add_argument('user_name', metavar='user_name', type=str,
                         help='User Name')
 
     args = parser.parse_args()
     asyncio.get_event_loop().run_until_complete(
-        run(room=args.room_name, user=args.user_name))
+        run(uri=args.ws_uri, room=args.room_name, user=args.user_name))
